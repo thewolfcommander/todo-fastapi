@@ -38,3 +38,30 @@ def get_all_todos(start: int = 0, end: int = 100, db: Session = Depends(get_db))
     API Endpoint to get all todos
     """
     return handlers.get_all_todos(db, start=start, end=end)
+
+
+@app.get('/todos/{todo_id}/')
+def get_all_todos(todo_id: int, db: Session = Depends(get_db)):
+    """
+    API Endpoint to get a single todo
+    """
+    return handlers.get_todo_by_id(db, todo_id)
+
+
+@app.put('/todos/{todo_id}/', response_model=schemas.TodoShow)
+def update_todo(todo_id: int, todo: schemas.TodoCreate, db: Session = Depends(get_db)):
+    """
+    API Endpoint to update the Todo
+    """
+    return handlers.update_todo(db, todo_id, todo)
+
+
+@app.delete('/todos/{todo_id}/')
+def delete_todo(todo_id: int, db: Session = Depends(get_db)):
+    """
+    API Endpoint to update the Todo
+    """
+    instance = db.query(models.Todo).filter(models.Todo.id == todo_id).first()
+    db.delete(instance)
+    db.commit()
+    return todo_id
